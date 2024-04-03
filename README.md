@@ -50,8 +50,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://github.com/hafidznurmawanhakim)
-- Website - [https://nestjs.com](https://hafidznurmawan.netlify.app/)
+- Author - [Hafidz](https://github.com/hafidznurmawanhakim)
+- Website - [Portofolio](https://hafidznurmawan.netlify.app/)
 
 ## License
 
