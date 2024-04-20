@@ -29,10 +29,10 @@ import { ConfigModule } from '@nestjs/config';
             type: 'postgres',
             host: 'localhost',
             port: 5432,
-            username: 'ouno',
-            password: 'supersu',
+            username: 'username',
+            password: 'pass',
             entities: ['**/entity/*.entity.ts'],
-            database: 'crm_db',
+            database: 'database',
             synchronize: true,
             logging: true,
             autoLoadEntities: true
@@ -40,7 +40,7 @@ import { ConfigModule } from '@nestjs/config';
         TypeOrmModule.forFeature([UserEntity, PostEntity, PostItemEntity]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
-            secret: 'secret',
+            secret: 'your secret',
             signOptions: { expiresIn: '900s' }
         }),
         MulterModule.register({

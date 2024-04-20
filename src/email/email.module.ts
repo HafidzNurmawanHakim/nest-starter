@@ -9,16 +9,16 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
     imports: [
         MailerModule.forRoot({
             transport: {
-                host: 'smtp.hostinger.com',
-                port: Number('465'),
+                host: 'host',
+                port: Number('port'),
                 secure: true,
                 auth: {
-                    user: 'hafidz.nurmawan@mediatamaindoteknologi.co.id',
-                    pass: 'Em@il123'
+                    user: 'your email',
+                    pass: 'pass'
                 }
             },
             defaults: {
-                from: '"MIT Assist" <hafidz.nurmawan@mediatamaindoteknologi.co.id>'
+                from: '"Subject" <your email>'
             },
             template: {
                 dir: join(__dirname, 'templates'),
