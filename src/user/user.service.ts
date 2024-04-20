@@ -15,5 +15,5 @@ export class UserService {
      async getUser(query: Object): Promise<UserEntity> {
         return await this.userRepository.findOne(query)
      }
-   
+
 }

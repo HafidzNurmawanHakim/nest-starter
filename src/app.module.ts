@@ -10,29 +10,52 @@ import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { PostController } from './post/post.controller';
+import { PostService } from './post/post.service';
+import { PostEntity, PostItemEntity } from './post/_entity/post.entity';
+import { MulterModule } from '@nestjs/platform-express';
+import { EmailModule } from './email/email.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { TypedEventEmitterModule } from './event-emitter/event.emitter.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'ouno',
-      password: 'supersu',
-      entities: ['**/entity/*.entity.ts'],
-      database: 'crm_db',
-      synchronize: true,
-      logging: true,
-      autoLoadEntities: true
-    }),
-    TypeOrmModule.forFeature([UserEntity]),
-    PassportModule.register({defaultStrategy: 'jwt'}),
-    JwtModule.register({
-      secret: 'secret',
-      signOptions: {expiresIn: 60}
-    })
-  ],
-  controllers: [AppController, UserController, AuthController ],
-  providers: [AppService, UserService, AuthService, JwtService, JwtStrategy],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: ['.env']
+        }),
+        TypeOrmModule.forRoot({
+            type: 'postgres',
+            host: 'localhost',
+            port: 5432,
+            username: 'ouno',
+            password: 'supersu',
+            entities: ['**/entity/*.entity.ts'],
+            database: 'crm_db',
+            synchronize: true,
+            logging: true,
+            autoLoadEntities: true
+        }),
+        TypeOrmModule.forFeature([UserEntity, PostEntity, PostItemEntity]),
+        PassportModule.register({ defaultStrategy: 'jwt' }),
+        JwtModule.register({
+            secret: 'secret',
+            signOptions: { expiresIn: '900s' }
+        }),
+        MulterModule.register({
+            dest: './uploads'
+        }),
+        EmailModule,
+        EventEmitterModule.forRoot(),
+        TypedEventEmitterModule
+    ],
+    controllers: [
+        AppController,
+        UserController,
+        AuthController,
+        PostController
+    ],
+    providers: [AppService, UserService, AuthService, JwtStrategy, PostService]
 })
 export class AppModule {}

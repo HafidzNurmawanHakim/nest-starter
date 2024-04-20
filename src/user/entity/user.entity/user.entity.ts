@@ -1,22 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Exclude } from 'class-transformer';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: string
+    id: string;
 
-    @Column({unique: true})
-    username: string
-
-    @Column()
-    fullName: string | null
+    @Column({ unique: true })
+    username: string;
 
     @Column()
-    email: string
+    fullName: string | null;
 
     @Column()
-    password: string
+    email: string;
 
-    @Column({type: 'timestamp', default: () => 'NOW()'})
-    created_at: Date
+    @Column()
+    @Exclude({ toPlainOnly: true })
+    password: string;
+
+    @Column({ type: 'timestamp', default: () => 'NOW()' })
+    created_at: Date;
 }
