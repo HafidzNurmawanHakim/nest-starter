@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsString, MaxLength } from 'class-validator';
 
 export class CreateUserDto {

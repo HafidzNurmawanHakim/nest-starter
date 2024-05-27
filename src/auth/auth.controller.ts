@@ -2,34 +2,42 @@ import {
     Body,
     ClassSerializerInterceptor,
     Controller,
+    HttpCode,
     Post,
+    Request,
+    UseGuards,
     UseInterceptors
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/dto/user.dto/createUser.dto';
 import { UserDto } from 'src/user/dto/user.dto/user.dto';
-import { TypedEventEmitter } from 'src/event-emitter/event-emitter';
+import { RefreshJwtGuard } from './refresh-jwt.guard';
 
 @Controller('auth')
 export class AuthController {
-    constructor(
-        private authService: AuthService,
-        private readonly eventEmitter: TypedEventEmitter
-    ) {}
+    constructor(private authService: AuthService) {}
     @Post('/signup')
     signUp(@Body() body: CreateUserDto): Promise<CreateUserDto> {
-        this.eventEmitter.emit('user.verify-email', {
-            name: 'Hafidz',
-            email: body.email,
-            otp: '231238' // generate a random OTP
-        });
-
         return this.authService.signUp(body);
     }
 
     @Post('/signin')
+    @HttpCode(200)
     @UseInterceptors(ClassSerializerInterceptor)
     signIn(@Body() body): Promise<{ token: string; user: UserDto }> {
         return this.authService.signIn(body.username, body.password);
+    }
+
+    @Post('/otp/verify')
+    veirifyOtp(
+        @Body() body: { email: string; otp: string; username: string }
+    ): Promise<any> {
+        return this.authService.verifyOtp(body.email, body.otp, body.username);
+    }
+
+    @Post('/refresh-token')
+    @UseGuards(RefreshJwtGuard)
+    refreshJwt(@Request() req): Promise<any> {
+        return this.authService.refreshToken(req.user);
     }
 }

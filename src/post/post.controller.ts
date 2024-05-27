@@ -11,11 +11,11 @@ import {
 import { PostService } from './post.service';
 import { PostDto } from './_dto/post.dto';
 import { CreatePostDto } from './_dto/createPost.dto';
-import { PageOptionsDto } from 'src/_dtos/pageOptions';
-import { PaginationDto } from 'src/_dtos/pagination.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { PageOptionsDto } from 'src/paginate/pageOptions';
+import { PaginationDto } from 'src/paginate/pagination.dto';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('post')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PostController {
@@ -29,6 +29,7 @@ export class PostController {
     }
     @Post('/new')
     async createPost(@Body() body: CreatePostDto): Promise<{ id: string }> {
+        console.log({ body });
         return await this.postService.create(body);
     }
 }

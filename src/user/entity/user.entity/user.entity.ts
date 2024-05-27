@@ -15,10 +15,19 @@ export class UserEntity {
     @Column()
     email: string;
 
+    @Column({ default: 'wibu' })
+    userRole: string;
+
     @Column()
     @Exclude({ toPlainOnly: true })
     password: string;
 
+    @Column({ default: () => 'false' })
+    isVerified: 'true' | 'false';
+
     @Column({ type: 'timestamp', default: () => 'NOW()' })
     created_at: Date;
+
+    @Column({ default: null })
+    refreshToken: string | null;
 }

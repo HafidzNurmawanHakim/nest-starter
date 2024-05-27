@@ -4,21 +4,26 @@ import { EmailController } from './email.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: ['.env']
+        }),
         MailerModule.forRoot({
             transport: {
-                host: 'host',
-                port: Number('port'),
+                host: process.env.EMAIL_HOST,
+                port: Number(process.env.EMAIL_PORT) || 465,
                 secure: true,
                 auth: {
-                    user: 'your email',
-                    pass: 'pass'
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS
                 }
             },
             defaults: {
-                from: '"Subject" <your email>'
+                from: `"MIT Assist" <${process.env.EMAIL_USER}>`
             },
             template: {
                 dir: join(__dirname, 'templates'),

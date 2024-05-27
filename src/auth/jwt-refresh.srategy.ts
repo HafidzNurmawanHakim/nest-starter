@@ -9,17 +9,19 @@ type JwtPayload = {
 };
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtRefreshStrategy extends PassportStrategy(
+    Strategy,
+    'jwt-refresh'
+) {
     constructor(private authService: AuthService) {
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
             ignoreExpiration: false,
             secretOrKey: process.env.JWT_SECRET
         });
     }
 
     async validate(payload: JwtPayload): Promise<any> {
-        console.log({ payload });
         return payload;
     }
 }

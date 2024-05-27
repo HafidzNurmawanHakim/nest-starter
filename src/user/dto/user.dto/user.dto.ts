@@ -16,6 +16,12 @@ export class UserDto {
     email: string;
 
     @IsString()
+    role: string;
+
+    @IsString()
     @MaxLength(12)
     password: string;
+
+    @IsString()
+    refreshToken: string | null;
 }

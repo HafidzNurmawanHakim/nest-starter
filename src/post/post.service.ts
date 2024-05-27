@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './_entity/post.entity';
 import { Repository } from 'typeorm';
-import { PageOptionsDto } from 'src/_dtos/pageOptions';
-import { PaginationDto } from 'src/_dtos/pagination.dto';
-import { PaginationMetaDto } from 'src/_dtos/paginationMeta.dto';
+import { PageOptionsDto } from 'src/paginate/pageOptions';
+import { PaginationDto } from 'src/paginate/pagination.dto';
+import { PaginationMetaDto } from 'src/paginate/paginationMeta.dto';
 
 @Injectable()
 export class PostService {

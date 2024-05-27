@@ -1,9 +1,8 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext } from '@nestjs/common';
 import { TokenExpiredError } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 
-@Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class RefreshJwtGuard extends AuthGuard('jwt-refresh') {
     handleRequest<TUser = any>(
         err: any,
         user: any,

@@ -5,7 +5,7 @@ import { UserController } from './user/user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user/user.service';
 import { UserEntity } from './user/entity/user.entity/user.entity';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { PassportModule } from '@nestjs/passport';
@@ -18,6 +18,10 @@ import { EmailModule } from './email/email.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypedEventEmitterModule } from './event-emitter/event.emitter.module';
 import { ConfigModule } from '@nestjs/config';
+import { Otp } from './otp/otp';
+import { OtpService } from './otp/otp.service';
+import { OtpEntity } from './otp/_entity/otp.entity';
+import { RefreshTokenStrategy } from './auth/refresh.jwt.strategy';
 
 @Module({
     imports: [
@@ -27,21 +31,26 @@ import { ConfigModule } from '@nestjs/config';
         }),
         TypeOrmModule.forRoot({
             type: 'postgres',
-            host: 'localhost',
-            port: 5432,
-            username: 'username',
-            password: 'pass',
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT) || 5432,
+            username: process.env.DB_USER,
+            password: process.env.DB_PASS,
             entities: ['**/entity/*.entity.ts'],
-            database: 'database',
+            database: process.env.DB_NAME,
             synchronize: true,
             logging: true,
             autoLoadEntities: true
         }),
-        TypeOrmModule.forFeature([UserEntity, PostEntity, PostItemEntity]),
+        TypeOrmModule.forFeature([
+            UserEntity,
+            PostEntity,
+            PostItemEntity,
+            OtpEntity
+        ]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
-            secret: 'your secret',
-            signOptions: { expiresIn: '900s' }
+            secret: process.env.SECRET_KEY,
+            signOptions: { expiresIn: '5s' }
         }),
         MulterModule.register({
             dest: './uploads'
@@ -56,6 +65,15 @@ import { ConfigModule } from '@nestjs/config';
         AuthController,
         PostController
     ],
-    providers: [AppService, UserService, AuthService, JwtStrategy, PostService]
+    providers: [
+        AppService,
+        UserService,
+        AuthService,
+        JwtStrategy,
+        RefreshTokenStrategy,
+        PostService,
+        Otp,
+        OtpService
+    ]
 })
 export class AppModule {}
