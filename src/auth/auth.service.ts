@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     ConflictException,
     HttpException,
     HttpStatus,
@@ -14,8 +13,6 @@ import * as bcrypt from 'bcrypt';
 import { UserEntity } from 'src/user/entity/user.entity/user.entity';
 import { CreateUserDto } from 'src/user/dto/user.dto/createUser.dto';
 import { TypedEventEmitter } from 'src/event-emitter/event-emitter';
-import * as speakeasy from 'speakeasy';
-import { OtpDto } from 'src/otp/_dto/otp.dto';
 import { OtpService } from 'src/otp/otp.service';
 import { generateOTP } from 'src/utils/generator';
 import { getExpiry, isTokenExpired } from 'src/utils/dateTimeUtlity';
@@ -151,44 +148,37 @@ export class AuthService {
         };
     }
 
-    async refreshToken(user: UserDto) {
-        const payload = {
-            sub: user.id,
-            uusername: user.username
-        };
+    async refreshToken(req) {
+        const refreshToken = req
+            .get('Authorization')
+            .replace('Bearer', '')
+            .trim();
+        try {
+            const decoded = this.jwtService.decode(refreshToken);
 
-        return {
-            accessToken: await this.jwtService.signAsync(payload, {
-                secret: process.env.JWT_SECRET,
-                expiresIn: '1m'
-            })
-        };
-
-        // try {
-        //     const decoded = this.jwtService.decode(refreshToken);
-        //     if (!decoded) {
-        //         throw new Error();
-        //     }
-        //     const user = await this.userRepository.findOneBy(decoded.email);
-        //     if (!user) {
-        //         throw new HttpException(
-        //             'User with this id does not exist',
-        //             HttpStatus.NOT_FOUND
-        //         );
-        //     }
-        //     const isRefreshTokenMatching = await bcrypt.compare(
-        //         refreshToken,
-        //         user.refreshToken
-        //     );
-        //     if (!isRefreshTokenMatching) {
-        //         throw new UnauthorizedException('Invalid token');
-        //     }
-
-        //     return await this.jwtService.verifyAsync(refreshToken, {
-        //         secret: process.env.JWT_SECRET
-        //     });
-        // } catch {
-        //     throw new UnauthorizedException('Invalid token');
-        // }
+            if (!decoded) {
+                throw new Error();
+            }
+            const user = await this.userRepository.findOneBy({
+                username: decoded.username
+            });
+            if (!user) {
+                throw new HttpException(
+                    'User with this id does not exist',
+                    HttpStatus.NOT_FOUND
+                );
+            }
+            const isRefreshTokenMatching = await bcrypt.compare(
+                refreshToken,
+                user.refreshToken
+            );
+            if (!isRefreshTokenMatching) {
+                throw new UnauthorizedException('Invalid token');
+            }
+            return await this.getTokens(user.id, user.username);
+        } catch (err) {
+            console.log({ err });
+            throw new UnauthorizedException('Invalid token');
+        }
     }
 }
