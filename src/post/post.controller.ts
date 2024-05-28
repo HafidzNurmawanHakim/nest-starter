@@ -14,8 +14,9 @@ import { CreatePostDto } from './_dto/createPost.dto';
 import { PageOptionsDto } from 'src/paginate/pageOptions';
 import { PaginationDto } from 'src/paginate/pagination.dto';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller('post')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PostController {

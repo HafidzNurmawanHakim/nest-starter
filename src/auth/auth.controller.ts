@@ -13,6 +13,7 @@ import { CreateUserDto } from 'src/user/dto/user.dto/createUser.dto';
 import { UserDto } from 'src/user/dto/user.dto/user.dto';
 import { RefreshJwtGuard } from './refresh-jwt.guard';
 import { JwtAuthGuard } from './auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -36,9 +37,10 @@ export class AuthController {
         return this.authService.verifyOtp(body.email, body.otp, body.username);
     }
 
+    @UseGuards(RefreshJwtGuard)
     @Post('/refresh-token')
-    @UseGuards(JwtAuthGuard)
     refreshJwt(@Request() req): Promise<any> {
+        console.log({ req });
         return this.authService.refreshToken(req);
     }
 }

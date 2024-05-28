@@ -127,7 +127,7 @@ export class AuthService {
                 },
                 {
                     secret: process.env.JWT_SECRET,
-                    expiresIn: '1m'
+                    expiresIn: '5m'
                 }
             ),
             this.jwtService.signAsync(
@@ -137,7 +137,7 @@ export class AuthService {
                 },
                 {
                     secret: process.env.JWT_SECRET,
-                    expiresIn: '7d'
+                    expiresIn: '1d'
                 }
             )
         ]);
@@ -149,6 +149,7 @@ export class AuthService {
     }
 
     async refreshToken(req) {
+        console.log({ req });
         const refreshToken = req
             .get('Authorization')
             .replace('Bearer', '')
@@ -162,6 +163,7 @@ export class AuthService {
             const user = await this.userRepository.findOneBy({
                 username: decoded.username
             });
+
             if (!user) {
                 throw new HttpException(
                     'User with this id does not exist',
